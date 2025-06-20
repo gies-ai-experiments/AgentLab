@@ -2,19 +2,14 @@
 import React from 'react';
 import Message from './Message';
 
-const MessageList = ({ messages }) => {
+export default function MessageList({ messages }) {
   return (
-    <div className="message-list">
-      {messages.map((message, index) => (
-        <Message 
-          key={index}
-          content={message.content}
-          sender={message.sender}
-          timestamp={message.timestamp}
-        />
+    <div>
+      {messages.map((msg, i) => (
+        <div key={i} className={`message ${msg.sender}`}>
+          {msg.text}
+        </div>
       ))}
     </div>
   );
-};
-
-export default MessageList;
+}

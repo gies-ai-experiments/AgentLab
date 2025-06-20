@@ -1,22 +1,23 @@
 // api.js
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-// expecting this. might be wrong. 
-// have to prompt using the specific end points. 
-// slash run endpoint gives the response from the agent.
-// 8000 is the default port for the backend server.
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const BASE_URL = "http://localhost:8000";
+
+export async function createSession() {
+  const res = await axios.post(`${BASE_URL}/api/sessions`);
+  return res.data.sessionId;
+}
+
+export async function sendMessage(sessionId, text) {
+  const res = await axios.post(`${BASE_URL}/api/chat/${sessionId}`, { text });
+  return res.data.response;
+}
+
+export async function getChatHistory(sessionId) {
+  const res = await axios.get(`${BASE_URL}/api/chat/${sessionId}`);
+  return res.data;
+}
 
 export const chatAPI = {
-  createSession: () => api.post('/api/sessions'),
-  sendMessage: (sessionId, message) => 
-    api.post(`/api/chat/${sessionId}`, { message }), 
-  getChatHistory: (sessionId) => api.get(`/api/chat/${sessionId}`),
-  getAgentStatus: (sessionId) => api.get(`/api/status/${sessionId}`),
+  getAgentStatus: (sessionId) => axios.get(`${BASE_URL}/api/status/${sessionId}`),
 };

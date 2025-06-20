@@ -1,18 +1,19 @@
 // useChat.js
 import { useState, useEffect } from 'react';
-import { chatAPI } from '../services/api';
+import { createSession, sendMessage as apiSendMessage, getChatHistory } from '../services/api';
 import websocketService from '../services/websocket';
 
-export const useChat = (sessionId) => {
+export default function useChat() {
+  const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (sessionId) {
-      // Load chat history
-      chatAPI.getChatHistory(sessionId)
-        .then(response => setMessages(response.data.messages))
-        .catch(console.error);
+    async function init() {
+      const id = await createSession();
+      setSessionId(id);
+      const history = await getChatHistory(id);
+      setMessages(history);
 
       // Listen for new messages
       websocketService.on('message', (message) => {
@@ -20,27 +21,18 @@ export const useChat = (sessionId) => {
         setIsLoading(false);
       });
     }
-  }, [sessionId]);
+    init();
+  }, []);
 
-  const sendMessage = async (content) => {
-    if (!sessionId) return;
-
-    const userMessage = {
-      content,
-      sender: 'user',
-      timestamp: new Date().toISOString(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
+  const sendMessage = async (text) => {
+    const agentResponse = await apiSendMessage(sessionId, text);
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text },
+      { sender: "agent", text: agentResponse }
+    ]);
     setIsLoading(true);
-
-    try {
-      await chatAPI.sendMessage(sessionId, content);
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      setIsLoading(false);
-    }
   };
 
   return { messages, sendMessage, isLoading };
-};
+}

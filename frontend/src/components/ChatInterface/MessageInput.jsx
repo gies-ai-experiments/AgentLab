@@ -1,31 +1,24 @@
 // MessageInput.jsx
 import React, { useState } from 'react';
 
-const MessageInput = ({ onSend, disabled }) => {
+export default function MessageInput({ onSend }) {
   const [input, setInput] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (input.trim() && !disabled) {
+  const handleSend = () => {
+    if (input.trim()) {
       onSend(input);
       setInput('');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="message-input">
+    <div>
       <input
-        type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="Type your message..."
-        disabled={disabled}
+        onKeyDown={(e) => e.key === "Enter" && handleSend()}
       />
-      <button type="submit" disabled={disabled || !input.trim()}>
-        Send
-      </button>
-    </form>
+      <button onClick={handleSend}>Send</button>
+    </div>
   );
-};
-
-export default MessageInput;
+}

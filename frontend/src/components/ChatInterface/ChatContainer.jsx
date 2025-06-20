@@ -1,23 +1,20 @@
 // ChatContainer.jsx
-import React, { useState } from 'react';
-import MessageList from './MessageList';
-import MessageInput from './MessageInput';
-import { useChat } from '../../hooks/useChat';
+import React from "react";
+import useChat from "../../hooks/useChat";
+import MessageList from "./MessageList";
+import MessageInput from "./MessageInput";
 import { useAgentStatus } from '../../hooks/useAgentStatus';
 import StatusDisplay from '../AgentStatus/StatusDisplay';
 
-const ChatContainer = () => {
-  const [sessionId, setSessionId] = useState(null);
-  const { messages, sendMessage, isLoading } = useChat(sessionId);
-  const { agentStatus, currentAgent } = useAgentStatus(sessionId);
+export default function ChatContainer() {
+  const { messages, sendMessage } = useChat();
+  const { agentStatus, currentAgent } = useAgentStatus();
 
   return (
     <div className="chat-container">
       <StatusDisplay status={agentStatus} agent={currentAgent} />
       <MessageList messages={messages} />
-      <MessageInput onSend={sendMessage} disabled={isLoading} />
+      <MessageInput onSend={sendMessage} />
     </div>
   );
-};
-
-export default ChatContainer;
+}

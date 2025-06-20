@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.message.user {
+  text-align: right;
+  background-color: #e0f7fa;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+.message.agent {
+  text-align: left;
+  background-color: #f1f8e9;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+}
